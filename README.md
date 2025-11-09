@@ -1,4 +1,4 @@
-# MediPin – Emergency Healthcare Locator System
+# MediPin – Your Nearest care, one pin away
 
 MediPin is a location-based **emergency assistance platform** that helps users quickly find the **nearest hospitals and clinics within a 5km radius**, get **real-time navigation routes**, and follow **step-by-step first-aid instructions** during critical medical situations.
 
