@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediPin | About Us</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Configure Tailwind for MediPin Colors -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'primary-blue': '#4a95a6',
+            'primary-dark': '#1e3a45',
+            'accent-light': '#e6f7ff',
+            'soft-gray': '#f5f7fa',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+</head>
+
+
+<body class="font-sans text-gray-800 bg-white">
+
+  <!-- TOP BAR -->
+<div class="bg-primary-blue text-white text-sm py-2 hidden sm:block">
+    <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+      <p>📞 24/7 Helpline: <span class="font-semibold">(555) 123-HELP</span></p>
+      <div class="flex items-center space-x-4">
+        <a href="about.html" class="hover:underline ">About</a>
+        <a href="faq.html" class="hover:underline">FAQ</a>
+        <a href="#contact" class="hover:underline">Contact</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-md border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-20">
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center space-x-2 text-primary-dark hover:text-primary-blue transition">
+          <i data-lucide="map-pin" class="text-primary-blue"></i>
+          <span class="text-2xl font-extrabold tracking-tight">MediPin</span>
+        </a>
+
+        <!-- Desktop Nav -->
+        <nav class="hidden md:flex space-x-8 text-gray-600 font-medium">
+          <a href="hospitals.html" class="hover:text-primary-blue">Hospitals</a>
+          <a href="clinics.html" class="hover:text-primary-blue">Clinics</a>
+          <a href="emergency1.html" class="hover:text-primary-blue">Emergency</a>
+        </nav>
+
+        <!-- Login / Register -->
+        <a href="login.html" class="bg-primary-blue text-white px-5 py-2 rounded-full font-semibold shadow hover:bg-primary-dark transition duration-300">
+          Login / Sign up
+        </a>
+
+        <!-- Mobile Menu -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-md text-primary-dark hover:text-primary-blue focus:outline-none">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="bg-primary-blue text-white text-center py-16">
+    <h1 class="text-4xl font-extrabold mb-4">About MediPin</h1>
+    <p class="max-w-2xl mx-auto text-lg leading-relaxed text-white/90">
+      MediPin connects you to trusted healthcare services near you — making access to hospitals, clinics, and emergency care faster, smarter, and more reliable.
+    </p>
+  </section>
+
+  <!-- MISSION & VISION -->
+  <section class="max-w-6xl mx-auto py-16 px-6 grid md:grid-cols-2 gap-12">
+    <div>
+      <h2 class="text-2xl font-bold text-primary-blue mb-3">Our Mission</h2>
+      <p class="text-gray-700 leading-relaxed">
+        Our mission is to make healthcare information accessible and actionable for everyone. 
+        With MediPin, you can instantly find verified medical facilities, specialists, and emergency services without hassle — because health should never be hard to reach.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-bold text-primary-blue mb-3">Our Vision</h2>
+      <p class="text-gray-700 leading-relaxed">
+        We envision a connected healthcare ecosystem where technology and compassion meet — enabling people to make informed medical decisions effortlessly, wherever they are.
+      </p>
+    </div>
+  </section>
+
+  <!-- WHAT WE DO -->
+  <section class="bg-soft-gray py-16 px-6">
+    <div class="max-w-6xl mx-auto text-center">
+      <h2 class="text-3xl font-bold text-primary-dark mb-10">What We Do</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition">
+          <i data-lucide="map" class="w-10 h-10 mx-auto text-primary-blue mb-4"></i>
+          <h3 class="text-xl font-semibold mb-3">Find Nearby Clinics</h3>
+          <p class="text-gray-600">Easily locate clinics with specialties, reviews, and contact info — all in one tap.</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition">
+          <i data-lucide="building-2" class="w-10 h-10 mx-auto text-primary-blue mb-4"></i>
+          <h3 class="text-xl font-semibold mb-3">Hospital Directory</h3>
+          <p class="text-gray-600">Browse through trusted hospitals and specialists for quick and reliable care.</p>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition">
+          <i data-lucide="ambulance" class="w-10 h-10 mx-auto text-primary-blue mb-4"></i>
+          <h3 class="text-xl font-semibold mb-3">Emergency Assistance</h3>
+          <p class="text-gray-600">Get immediate access to nearby emergency wards, ambulances, and urgent care.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+ 
+
+  
+
+  <!-- FOOTER -->
+  <footer id="contact" class="relative bg-gradient-to-b from-primary-dark to-[#102B33] text-gray-300 pt-16 pb-10">
+    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-blue via-cyan-400 to-primary-blue"></div>
+
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-5 gap-12">
+      <div>
+        <a href="index.html" class="flex items-center space-x-2 mb-4">
+          <i data-lucide="map-pin" class="text-primary-blue w-6 h-6"></i>
+          <span class="text-2xl font-extrabold text-white">MediPin</span>
+        </a>
+        <p class="text-sm text-gray-400 mb-4">Your trusted guide to finding hospitals, clinics, and healthcare specialists near you.</p>
+        <p class="font-semibold text-white">Need Help? <span class="text-primary-blue">(555) 123-HELP</span></p>
+        <p class="text-sm text-gray-400 mt-1">Available 24/7 for emergency support.</p>
+      </div>
+
+      <div>
+        <h4 class="text-lg font-semibold text-primary-blue mb-4">Company</h4>
+        <ul class="space-y-2">
+          <li><a href="about.html" class="hover:text-white">About Us</a></li>
+          <li><a href="faq.html" class="hover:text-white">FAQ / Help Center</a></li>
+          <li><a href="#contact" class="hover:text-white">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-lg font-semibold text-primary-blue mb-4">Finder Tools</h4>
+        <ul class="space-y-2">
+          <li><a href="hospitals.html" class="hover:text-white">Nearby Hospitals</a></li>
+          <li><a href="clinics.html" class="hover:text-white">Specialist Clinics</a></li>
+          <li><a href="emergency1.html" class="hover:text-white">Emergency Care Centers</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-lg font-semibold text-primary-blue mb-4">Top Searches</h4>
+        <ul class="space-y-2">
+          <li><a href="#" class="hover:text-white">Pediatricians Near Me</a></li>
+          <li><a href="#" class="hover:text-white">Dental & Orthodontic Care</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-lg font-semibold text-primary-blue mb-4">Follow Us</h4>
+        <div class="flex space-x-4">
+          <a href="#" class="hover:text-primary-blue"><i data-lucide="facebook"></i></a>
+          <a href="#" class="hover:text-primary-blue"><i data-lucide="instagram"></i></a>
+          <a href="#" class="hover:text-primary-blue"><i data-lucide="twitter"></i></a>
+          <a href="#" class="hover:text-primary-blue"><i data-lucide="linkedin"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-t border-gray-700 mt-12 pt-6 text-center">
+      <p class="text-sm text-gray-500">
+        &copy; 2025 <span class="text-primary-blue font-semibold">MediPin Health Finder</span> — Empowering better healthcare decisions.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => lucide.createIcons());
+  </script>
+</body>
+</html>
