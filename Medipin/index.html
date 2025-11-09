@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medipin - Find Care Near You</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load Lucide Icons for aesthetic icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Configure Tailwind for custom colors and Inter font -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#4a95a6', // Soft Teal/Cyan for primary color
+                        'primary-dark': '#1e3a45',
+                        'accent-light': '#e6f7ff', // Very light blue for subtle background
+                        'soft-gray': '#f5f7fa',
+                        'location-bg': '#f0faff', // Lighter accent for search box
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+
+    <style>
+        /* Custom styles for aesthetic elements */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .hero-background {
+            /* Subtle gradient background for the hero section */
+            background: linear-gradient(180deg, #ffffff 0%, #e6f7ff 100%);
+        }
+
+        .card-shadow {
+            box-shadow: 0 10px 20px rgba(74, 149, 166, 0.15);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card-shadow:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px rgba(74, 149, 166, 0.25);
+        }
+
+        /* Responsive icon sizing for Lucide */
+        .lucide {
+            width: 28px;
+            height: 28px;
+        }
+
+        /* Modal backdrop for the appointment form */
+        .modal-backdrop {
+            background-color: rgba(30, 58, 69, 0.7);
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-800 bg-white">
+
+
+<div class="bg-primary-blue text-white text-sm py-2 hidden sm:block">
+  <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+    <p>📞 24/7 Helpline: <span class="font-semibold">(555) 123-HELP</span></p>
+    <div class="flex items-center space-x-4">
+      <a href="aboutus.html" class="hover:underline">About</a>
+      <a href="faq.html" class="hover:underline">FAQ</a>
+      <a href="contact.html" class="hover:underline">Contact</a>
+    </div>
+  </div>
+</div>
+  
+
+<!-- Main Header -->
+<header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-md border-b border-gray-100 transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-20">
+      
+      <!-- Logo -->
+      <a href="index.html" class="flex items-center space-x-2 text-primary-dark hover:text-primary-blue transition-colors">
+        <i data-lucide="map-pin" class="text-primary-blue"></i>
+        <span class="text-2xl font-extrabold tracking-tight">Medipin</span>
+      </a>
+      
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex space-x-8 text-gray-600 font-medium">
+        <a href="hospitals.html" class="hover:text-primary-blue transition-colors relative after:absolute after:left-0 after:bottom-[-4px] after:w-0 after:h-[2px] after:bg-primary-blue hover:after:w-full after:transition-all after:duration-300">Hospitals</a>
+        <a href="clinics.html" class="hover:text-primary-blue transition-colors relative after:absolute after:left-0 after:bottom-[-4px] after:w-0 after:h-[2px] after:bg-primary-blue hover:after:w-full after:transition-all after:duration-300">Clinics</a>
+        
+        <a href="emergency1.html" class="hover:text-primary-blue transition-colors relative after:absolute after:left-0 after:bottom-[-4px] after:w-0 after:h-[2px] after:bg-primary-blue hover:after:w-full after:transition-all after:duration-300">Emergency</a>
+      </nav>
+
+    
+
+
+      <div class="flex items-center gap-4">
+  <!-- Login / Register -->
+  <div id="auth-ui-container" class="flex gap-2">
+    <a href="login.html" class="bg-primary-blue text-white px-5 py-2 rounded-full font-semibold shadow hover:bg-primary-dark transition duration-300">
+      Login / Sign up
+    </a>
+  </div>
+
+  <!-- User Profile Menu -->
+  <div class="relative hidden" id="userMenuContainer">
+    <button id="userMenuBtn" class="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-200 transition">
+      <img id="userAvatar" src="https://i.pravatar.cc/150?u=default" class="w-8 h-8 rounded-full" />
+      <span id="userNameDisplay" class="font-medium">Guest</span>
+      <i class="bi bi-caret-down-fill text-gray-600"></i>
+    </button>
+
+    <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-50">
+      <div class="px-4 py-3 border-b">
+        <p id="dropdownName" class="text-sm font-semibold">User</p>
+        <p id="dropdownEmail" class="text-xs text-gray-500 truncate">user@email.com</p>
+      </div>
+      <button id="logoutBtn" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-100">
+        <i class="bi bi-box-arrow-right mr-2"></i> Logout
+      </button>
+    </div>
+  </div>
+</div>
+
+
+      <!-- Mobile Menu Button -->
+      <button id="mobile-menu-btn" class="md:hidden p-2 rounded-md text-primary-dark hover:text-primary-blue focus:outline-none" aria-label="Toggle menu">
+        <i data-lucide="menu"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Dropdown Menu -->
+  <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100">
+    <a href="hospitals.html" class="block py-3 px-4 text-gray-700 hover:bg-accent-light font-medium">Hospitals</a>
+    <a href="clinics.html" class="block py-3 px-4 text-gray-700 hover:bg-accent-light font-medium">Clinics</a>
+    
+    <a href="emergency1.html" class="block py-3 px-4 text-gray-700 hover:bg-accent-light font-medium">Emergency</a>
+
+    <a href="login.html" class="block w-full text-center bg-primary-dark text-white py-3 font-semibold hover:bg-opacity-90 transition duration-300">
+      Login / Sign up
+    </a>
+  </div>
+
+</header>
+    <main>
+        <!-- 2. Hero Section: Primary Location Search (Increased Bottom Padding) -->
+        <section id="home" class="hero-background pt-16 pb-32 sm:pt-24 sm:pb-48">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 items-center">
+                <!-- Content Column -->
+                <div class="md:col-span-2 text-center max-w-4xl mx-auto">
+                    <h1 class="text-5xl sm:text-6xl font-extrabold text-primary-dark leading-tight mb-4">
+                        Find Trusted Healthcare,<br><span class="text-primary-blue">Right Where You Are.</span>
+                    </h1>
+                    <p class="text-xl text-gray-600 mb-10 max-w-3xl mx-auto">
+                        Medipin helps you search top-rated hospitals, specialty clinics, and doctors instantly.
+                    </p>
+                    
+                    <!-- Search Input Box -->
+                    <div id="search" class="bg-location-bg p-6 sm:p-8 rounded-xl shadow-2xl shadow-primary-blue/20 max-w-2xl mx-auto">
+                        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                            <!-- Location Input -->
+                            <div class="relative flex-grow">
+                                <input type="text" id="location-input" placeholder="Enter City, Zip, or Address to Search" class="w-full p-4 pl-12 rounded-xl border-2 border-primary-blue/20 focus:ring-2 focus:ring-primary-blue focus:border-primary-blue shadow-md text-lg transition duration-300" required>
+                                <i data-lucide="map-pin" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-primary-blue w-6 h-6"></i>
+                            </div>
+                            
+                            <!-- Locate Button -->
+                            <button class="flex items-center justify-center bg-primary-blue text-white text-lg py-3 px-6 rounded-xl font-bold shadow-xl shadow-primary-blue/30 hover:bg-opacity-90 transition duration-300 transform hover:scale-[1.02]">
+                                <i data-lucide="locate" class="w-5 h-5 mr-2"></i> Search                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 3. NEW: Hospital vs. Clinic Cards (Primary Navigation) -->
+        <section id="cards" class="py-12 sm:py-20 bg-soft-gray">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Card 1: Find a Hospital -->
+                    <div class="bg-white rounded-3xl overflow-hidden card-shadow">
+                        <!-- Placeholder Image for Hospital -->
+                        <img src="photos/hospital.jpg" 
+                             alt="Modern Hospital Exterior" 
+                             class="w-full h-64 object-cover"
+                             onerror="this.onerror=null; this.src='https://placehold.co/600x250/1e3a45/ffffff?text=Trusted+Hospital+Building';"
+                        >
+                        <div class="p-8">
+                            <i data-lucide="hospital" class="text-primary-blue w-10 h-10 mb-4"></i>
+                            <h3 class="text-3xl font-extrabold text-primary-dark mb-3">Find a Hospital</h3>
+                            
+                            <a href="hospitals.html" class="inline-flex items-center justify-center bg-primary-dark text-white py-3 px-6 rounded-xl font-semibold hover:bg-primary-blue transition duration-300">
+                                Nearby Hospitals
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Find a Clinic -->
+                    <div class="bg-white rounded-3xl overflow-hidden card-shadow">
+                        <!-- Placeholder Image for Clinic -->
+                        <img src="photos/clinic1.jpg" 
+                             alt="Calm Clinic Waiting Area" 
+                             class="w-full h-64 object-cover opacity-90"
+                             onerror="this.onerror=null; this.src='https://placehold.co/600x250/4a95a6/1e3a45?text=Calm+Clinic+Waiting+Area';"
+                        >
+                        <div class="p-8">
+                            <i data-lucide="stethoscope" class="text-primary-blue w-10 h-10 mb-4"></i>
+                            <h3 class="text-3xl font-extrabold text-primary-dark mb-3">Find a Clinic</h3>
+                            
+                            <a href="clinics.html" class="inline-flex items-center justify-center bg-primary-blue text-white py-3 px-6 rounded-xl font-semibold hover:bg-primary-dark transition duration-300">
+                                Nearby Clinics
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services/Care Types Section -->
+<section id="services" class="py-20 sm:py-28">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-4xl font-extrabold text-center text-primary-dark mb-4">Explore Care Specialties</h2>
+        <p class="text-lg text-center text-gray-600 mb-16 max-w-2xl mx-auto">
+            Quickly jump to searching facilities specializing in these areas.
+        </p>
+
+        
+<!-- Service Cards Grid -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+    <!-- Card 1: Gynecologist -->
+    <div class="bg-white p-6 rounded-2xl card-shadow flex flex-col items-center text-center cursor-pointer hover:bg-accent-light/50">
+        <img src="photos/gynac.png" alt="Gynecologist" class="mb-3 w-20 h-20 object-contain">
+        <h3 class="text-xl font-bold text-primary-dark">Gynecologist</h3>
+    </div>
+
+    <!-- Card 2: ENT Specialist -->
+    <div class="bg-white p-6 rounded-2xl card-shadow flex flex-col items-center text-center cursor-pointer hover:bg-accent-light/50">
+        <img src="photos/ent.webp" alt="ENT Specialist" class="mb-3 w-20 h-20 object-contain">
+        <h3 class="text-xl font-bold text-primary-dark">ENT Specialist</h3>
+    </div>
+
+    <!-- Card 3: Pediatrician -->
+    <div class="bg-white p-6 rounded-2xl card-shadow flex flex-col items-center text-center cursor-pointer hover:bg-accent-light/50">
+        <img src="photos/pediatrician.webp" alt="Pediatrician" class="mb-3 w-20 h-20 object-contain">
+        <h3 class="text-xl font-bold text-primary-dark">Pediatrician</h3>
+    </div>
+
+    <!-- Card 4: Dermatologist -->
+    <div class="bg-white p-6 rounded-2xl card-shadow flex flex-col items-center text-center cursor-pointer hover:bg-accent-light/50">
+        <img src="photos/dermatt.webp" alt="Dermatologist" class="mb-3 w-20 h-20 object-contain">
+        <h3 class="text-xl font-bold text-primary-dark">Dermatologist</h3>
+    </div>
+
+    <!-- Card 5: Dentist -->
+    <div class="bg-white p-6 rounded-2xl card-shadow flex flex-col items-center text-center cursor-pointer hover:bg-accent-light/50">
+        <img src="photos/dentist.webp" alt="Dentist" class="mb-3 w-20 h-20 object-contain">
+        <h3 class="text-xl font-bold text-primary-dark">Dentist</h3>
+    </div>
+
+    <!-- Card 6: Physiotherapist -->
+    <div class="bg-white p-6 rounded-2xl card-shadow flex flex-col items-center text-center cursor-pointer hover:bg-accent-light/50">
+        <img src="photos/physio.avif" alt="Physiotherapist" class="mb-3 w-20 h-20 object-contain">
+        <h3 class="text-xl font-bold text-primary-dark">Physiotherapist</h3>
+    </div>
+</div>
+
+
+
+     
+
+<!-- Include Swiper CSS in <head> -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"
+/>
+
+    <!-- Services/Care Types Section -->
+<section id="services" class="py-20 sm:py-28">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-4xl font-extrabold text-center text-primary-dark mb-4">Emergency & First Aid Tips</h2>
+        <p class="text-lg text-center text-gray-600 mb-16 max-w-2xl mx-auto">
+            Learn how to act in emergencies and keep your first aid skills sharp.
+        </p>
+
+
+
+<!-- Full-Width Swiper Slider: Emergency & Health Articles -->
+<section class="w-full bg-white py-16">
+  <div class="swiper w-full">
+    <div class="swiper-wrapper">
+
+      <!-- Slide 1: Heart Attack -->
+      <div class="swiper-slide bg-white p-6 rounded-2xl shadow-xl border border-primary-blue/20">
+        <img src="photos/heart1.jpg" alt="Heart Attack" class="rounded-lg mb-4 w-full h-48 object-cover">
+        <h3 class="font-bold text-primary-dark text-xl mb-2">How to Handle a Heart Attack</h3>
+        <p class="text-gray-600 mb-4">Step-by-step guide on what to do if someone suffers a heart attack.</p>
+        <a href="heartattack.html" class="text-primary-blue font-semibold hover:underline">Read More →</a>
+      </div>
+
+      <!-- Slide 2: Home First Aid Kit -->
+      <div class="swiper-slide bg-white p-6 rounded-2xl shadow-xl border border-primary-blue/20">
+        <img src="photos/firstaid.jpg" alt="Home First Aid Kit" class="rounded-lg mb-4 w-full h-48 object-cover">
+        <h3 class="font-bold text-primary-dark text-xl mb-2">Building a Home First Aid Kit</h3>
+        <p class="text-gray-600 mb-4">Essential items every home should have to be prepared for emergencies.</p>
+        <a href="first.html" class="text-primary-blue font-semibold hover:underline">Read More →</a>
+      </div>
+
+      <!-- Slide 3: Burns & Cuts -->
+      <div class="swiper-slide bg-white p-6 rounded-2xl shadow-xl border border-primary-blue/20">
+        <img src="photos/burn1.png" alt="Burn Treatment" class="rounded-lg mb-4 w-full h-48 object-cover">
+        <h3 class="font-bold text-primary-dark text-xl mb-2">First Aid for Burns & Cuts</h3>
+        <p class="text-gray-600 mb-4">Quick and effective ways to treat minor burns and cuts at home.</p>
+        <a href="burns.html" class="text-primary-blue font-semibold hover:underline">Read More →</a>
+      </div>
+
+      <!-- Slide 4: Mental Health -->
+      <div class="swiper-slide bg-white p-6 rounded-2xl shadow-xl border border-primary-blue/20">
+        <img src="photos/mentalhealth.jpg" alt="Mental Health" class="rounded-lg mb-4 w-full h-48 object-cover">
+        <h3 class="font-bold text-primary-dark text-xl mb-2">Coping with Mental Health Emergencies</h3>
+        <p class="text-gray-600 mb-4">How to provide emotional first aid and seek help during mental health crises.</p>
+        <a href="mentalhealth.html" class="text-primary-blue font-semibold hover:underline">Read More →</a>
+      </div>
+
+      <!-- Slide 5: Asthma Attack -->
+      <div class="swiper-slide bg-white p-6 rounded-2xl shadow-xl border border-primary-blue/20">
+        <img src="photos/asthma.jpg" alt="Asthma Attack" class="rounded-lg mb-4 w-full h-48 object-cover">
+        <h3 class="font-bold text-primary-dark text-xl mb-2">Managing an Asthma Attack</h3>
+        <p class="text-gray-600 mb-4">Learn what to do when someone experiences sudden breathing difficulty.</p>
+        <a href="asthma.html" class="text-primary-blue font-semibold hover:underline">Read More →</a>
+      </div>
+
+      <!-- Slide 6: Electric Shock -->
+      <div class="swiper-slide bg-white p-6 rounded-2xl shadow-xl border border-primary-blue/20">
+        <img src="photos/electric.jpg" alt="Electric Shock" class="rounded-lg mb-4 w-full h-48 object-cover">
+        <h3 class="font-bold text-primary-dark text-xl mb-2">What to Do After an Electric Shock</h3>
+        <p class="text-gray-600 mb-4">Stay safe and take the right steps while waiting for professional help.</p>
+        <a href="shock.html" class="text-primary-blue font-semibold hover:underline">Read More →</a>
+      </div>
+
+      <!-- Slide 7: Heat Stroke -->
+      <div class="swiper-slide bg-white p-6 rounded-2xl shadow-xl border border-primary-blue/20">
+        <img src="photos/heat.jpg" alt="Heat Stroke" class="rounded-lg mb-4 w-full h-48 object-cover">
+        <h3 class="font-bold text-primary-dark text-xl mb-2">Preventing and Treating Heat Stroke</h3>
+        <p class="text-gray-600 mb-4">Recognize symptoms and cool the body quickly to prevent complications.</p>
+        <a href="heatstroke.html" class="text-primary-blue font-semibold hover:underline">Read More →</a>
+      </div>
+
+    </div>
+
+    <!-- Navigation Arrows -->
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-pagination mt-4"></div>
+  </div>
+</section>
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+<script>
+  const swiper = new Swiper('.swiper', {
+    slidesPerView: 1,
+    spaceBetween: 24,
+    loop: true,
+    autoplay: { delay: 3500, disableOnInteraction: false },
+    pagination: { el: '.swiper-pagination', clickable: true },
+    navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+    breakpoints: {
+      768: { slidesPerView: 2 },
+      1024: { slidesPerView: 3 },
+      1440: { slidesPerView: 4 },
+    },
+  });
+</script>
+
+<style>
+  /* White arrows with hover effect */
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: #81c3c4 !important;
+    transform: scale(0.9);
+    transition: all 0.3s ease;
+  }
+  .swiper-button-next:hover,
+  .swiper-button-prev:hover {
+    transform: scale(1);
+    color: #3e5862 !important;
+  }
+</style>
+
+
+
+       <!-- 6. Trust Section (Enhanced with Nearby Clinics) -->
+<section class="py-20 sm:py-28 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Headline -->
+    <div class="text-center mb-12">
+      <h2 class="text-4xl font-extrabold text-primary-dark mb-4">Why Patients Trust Us</h2>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+        From real patient reviews to instant bookings and nearby clinics, we make healthcare simple, fast, and reliable.
+      </p>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="grid md:grid-cols-3 lg:grid-cols-5 gap-10 text-center items-start">
+
+      <!-- Feature 1 -->
+      <div class="p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 ease-in-out">
+        <i data-lucide="star" class="text-yellow-500 w-12 h-12 mx-auto mb-4 fill-yellow-500"></i>
+        <h3 class="text-lg font-bold text-primary-dark mb-2">Users Ratings</h3>
+        <p class="text-gray-500 text-sm">Check genuine feedback from patients before making a choice.</p>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 ease-in-out">
+        <i data-lucide="clipboard-check" class="text-primary-blue w-12 h-12 mx-auto mb-4"></i>
+        <h3 class="text-lg font-bold text-primary-dark mb-2">Instant Booking</h3>
+        <p class="text-gray-500 text-sm">Book appointments in seconds, no waiting or paperwork.</p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 ease-in-out">
+        <i data-lucide="map-pin" class="text-red-600 w-12 h-12 mx-auto mb-4"></i>
+        <h3 class="text-lg font-bold text-primary-dark mb-2">Nearby Hospitals</h3>
+        <p class="text-gray-500 text-sm">Find hospitals close to you, ready to assist at any time.</p>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 ease-in-out">
+        <i data-lucide="heart-pulse" class="text-pink-600 w-12 h-12 mx-auto mb-4"></i>
+        <h3 class="text-lg font-bold text-primary-dark mb-2">Emergency Ready</h3>
+        <p class="text-gray-500 text-sm">Critical situations handled with speed and care.</p>
+      </div>
+
+      <!-- Feature 5 -->
+      <div class="p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 ease-in-out">
+        <i data-lucide="crosshair" class="text-green-600 w-12 h-12 mx-auto mb-4"></i>
+        <h3 class="text-lg font-bold text-primary-dark mb-2">Nearby Clinics</h3>
+        <p class="text-gray-500 text-sm">Locate clinics nearby for quick consultations and treatments.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<section id="testimonials" class="py-20 sm:py-28 bg-white">
+
+    <h2 class="text-4xl font-extrabold text-primary-dark text-center mb-12">
+        What Our Users Say
+    </h2>
+
+    <div class="relative w-full">
+
+        
+
+            <!-- Review Slides -->
+            <div class="review-slide active bg-white p-8 rounded-2xl shadow-xl border border-gray-300 w-full mx-auto text-center max-w-4xl">
+                <i data-lucide="quote" class="text-gray-400 w-10 h-10 mx-auto mb-4"></i>
+                <p class="text-xl italic text-gray-700 mb-6 leading-relaxed">
+                    "Medipin is a lifesaver. Found an urgent care clinic in minutes when my son fell. The interface is clean and trustworthy, which is exactly what you need in an emergency."
+                </p>
+                <p class="font-bold text-gray-900">- Sarah M., Andheri</p>
+            </div>
+
+            <div class="review-slide hidden bg-white p-8 rounded-2xl shadow-xl border border-gray-300 w-full mx-auto text-center max-w-4xl">
+                <i data-lucide="quote" class="text-gray-400 w-10 h-10 mx-auto mb-4"></i>
+                <p class="text-xl italic text-gray-700 mb-6 leading-relaxed">
+                    "Finally, a healthcare finder that isn't confusing or cluttered. The Quick Booking form was so simple and saved me a ton of time on the phone."
+                </p>
+                <p class="font-bold text-gray-900">- David P., Bandra</p>
+            </div>
+
+            <div class="review-slide hidden bg-white p-8 rounded-2xl shadow-xl border border-gray-300 w-full mx-auto text-center max-w-4xl">
+                <i data-lucide="quote" class="text-gray-400 w-10 h-10 mx-auto mb-4"></i>
+                <p class="text-xl italic text-gray-700 mb-6 leading-relaxed">
+                    "I love the aesthetic and how easy it is to distinguish between a hospital and a specialized clinic. It made finding a new pediatrician stress-free."
+                </p>
+                <p class="font-bold text-gray-900">- Jessica L., Juhu</p>
+            </div>
+
+            <div class="review-slide hidden bg-white p-8 rounded-2xl shadow-xl border border-gray-300 w-full mx-auto text-center max-w-4xl">
+                <i data-lucide="quote" class="text-gray-400 w-10 h-10 mx-auto mb-4"></i>
+                <p class="text-xl italic text-gray-700 mb-6 leading-relaxed">
+                    "The nearby clinic map saved me when I had a sudden migraine. Being able to locate and book an appointment immediately is phenomenal."
+                </p>
+                <p class="font-bold text-gray-900">- Ananya S., Powai</p>
+            </div>
+
+            <div class="review-slide hidden bg-white p-8 rounded-2xl shadow-xl border border-gray-300 w-full mx-auto text-center max-w-4xl">
+                <i data-lucide="quote" class="text-gray-400 w-10 h-10 mx-auto mb-4"></i>
+                <p class="text-xl italic text-gray-700 mb-6 leading-relaxed">
+                    "The notifications and real-time updates about clinic availability are amazing. It really feels like the app has your back."
+                </p>
+                <p class="font-bold text-gray-900">- Rohit K., Chembur</p>
+            </div>
+
+          <!-- Left Arrow -->
+<button onclick="prevReview()" 
+    class="absolute left-4 top-1/2 transform -translate-y-1/2 p-3 rounded-full bg-white text-gray-700 shadow-lg z-10 
+           hover:bg-primary-blue hover:text-white transition-colors duration-300" 
+    aria-label="Previous review">
+    <i data-lucide="chevron-left" class="w-6 h-6"></i>
+</button>
+
+<!-- Right Arrow -->
+<button onclick="nextReview()" 
+    class="absolute right-4 top-1/2 transform -translate-y-1/2 p-3 rounded-full bg-white text-gray-700 shadow-lg z-10 
+           hover:bg-primary-blue hover:text-white transition-colors duration-300" 
+    aria-label="Next review">
+    <i data-lucide="chevron-right" class="w-6 h-6"></i>
+</button>
+
+
+
+        </div>
+
+        <!-- Indicators -->
+        <div class="flex justify-center space-x-2 mt-8">
+            <span class="indicator w-3 h-3 rounded-full bg-gray-700 cursor-pointer" onclick="showReview(0)"></span>
+            <span class="indicator w-3 h-3 rounded-full bg-gray-400 cursor-pointer" onclick="showReview(1)"></span>
+            <span class="indicator w-3 h-3 rounded-full bg-gray-400 cursor-pointer" onclick="showReview(2)"></span>
+            <span class="indicator w-3 h-3 rounded-full bg-gray-400 cursor-pointer" onclick="showReview(3)"></span>
+            <span class="indicator w-3 h-3 rounded-full bg-gray-400 cursor-pointer" onclick="showReview(4)"></span>
+        </div>
+
+    </div>
+</section>
+
+<script>
+let currentReview = 0;
+const reviews = document.querySelectorAll('.review-slide');
+const indicators = document.querySelectorAll('.indicator');
+
+function showReview(index) {
+    reviews.forEach((review, i) => {
+        review.classList.toggle('hidden', i !== index);
+        review.classList.toggle('active', i === index);
+        indicators[i].classList.toggle('bg-gray-700', i === index);
+        indicators[i].classList.toggle('bg-gray-400', i !== index);
+    });
+    currentReview = index;
+}
+
+function nextReview() {
+    let next = currentReview + 1;
+    if (next >= reviews.length) next = 0;
+    showReview(next);
+}
+
+function prevReview() {
+    let prev = currentReview - 1;
+    if (prev < 0) prev = reviews.length - 1;
+    showReview(prev);
+}
+
+// Auto slide every 7 seconds
+setInterval(nextReview, 7000);
+</script>
+
+
+  <!-- 8. FINAL CALL TO ACTION (CTA Banner) -->
+        <section class="py-16 bg-primary-blue text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-4xl sm:text-5xl font-extrabold mb-4 leading-tight">
+                    Start Your Health Journey Now
+                </h2>
+                <p class="text-xl opacity-90 mb-8 max-w-3xl mx-auto">
+                    Search over 5,000 verified providers. Your next appointment is just a click away.
+                </p>
+                <div class="flex justify-center flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <button class="bg-white text-primary-dark py-3 px-8 rounded-xl font-bold text-lg hover:bg-soft-gray transition duration-300 shadow-xl transform hover:scale-[1.03]" onclick="document.getElementById('location-input').focus();">
+                        <i data-lucide="search" class="w-5 h-5 inline-block mr-2"></i> Find Nearby Hospitals/Clinics.
+                    </button>
+                    <button onclick="toggleModal(true)" class="bg-primary-dark text-white py-3 px-8 rounded-xl font-bold text-lg hover:bg-opacity-90 transition duration-300 border-2 border-white transform hover:scale-[1.03]">
+                        Quick Book
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+
+
+
+
+    </main>
+
+     <!-- 7. Footer (Contact & Info) -->
+   <footer id="contact" class="relative bg-gradient-to-b from-primary-dark to-[#102B33] text-gray-300 pt-16 pb-10">
+  <!-- Decorative Top Border -->
+  <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-blue via-cyan-400 to-primary-blue"></div>
+
+  <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-5 gap-12">
+    
+    <!-- Brand Section -->
+    <div>
+      <a href="index.html" class="flex items-center space-x-2 mb-4">
+        <i data-lucide="map-pin" class="text-primary-blue w-6 h-6"></i>
+        <span class="text-2xl font-extrabold text-white tracking-tight">Medipin</span>
+      </a>
+      <p class="text-sm text-gray-400 leading-relaxed mb-4">
+        Your trusted guide to finding hospitals, clinics, and healthcare specialists near you.
+      </p>
+      <p class="font-semibold text-white">
+        Need Help? <span class="text-primary-blue">(555) 123-HELP</span>
+      </p>
+      <p class="text-sm text-gray-400 mt-1">
+        Available 24/7 for emergency support.
+      </p>
+    </div>
+
+    <!-- (Company) -->
+    <div>
+      <h4 class="text-lg font-semibold text-primary-blue mb-4">Company</h4>
+      <ul class="space-y-2">
+        <li><a href="#about" class="hover:text-white transition-colors">About Us</a></li>
+        <li><a href="#faq" class="hover:text-white transition-colors">FAQ / Help Center</a></li>
+        <li><a href="#contact" class="hover:text-white transition-colors">Contact Us</a></li>
+      </ul>
+    </div>
+
+    <!-- Finder Tools -->
+    <div>
+      <h4 class="text-lg font-semibold text-primary-blue mb-4">Finder Tools</h4>
+      <ul class="space-y-2">
+        <li><a href="hospitals.html" class="hover:text-white transition-colors">Nearby Hospitals</a></li>
+        <li><a href="clinics.html" class="hover:text-white transition-colors">Specialist Clinics</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Emergency Care Centers</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Health Insurance Partners</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Book Appointment</a></li>
+      </ul>
+    </div>
+
+    <!-- Top Searches -->
+    <div>
+      <h4 class="text-lg font-semibold text-primary-blue mb-4">Top Searches</h4>
+      <ul class="space-y-2">
+        <li><a href="#" class="hover:text-white transition-colors">Pediatricians Near Me</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Skin & Hair Specialists</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Physiotherapy Clinics</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Dental & Orthodontic Care</a></li>
+      </ul>
+    </div>
+
+    
+    <!-- Legal -->
+    <div>
+      <h4 class="text-lg font-semibold text-primary-blue mb-4">Legal</h4>
+      <ul class="space-y-2 mb-6">
+        <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Accessibility</a></li>
+        <li><a href="#" class="hover:text-white transition-colors">Contact & Feedback</a></li>
+      </ul>
+
+      <!-- Social Icons -->
+      <div>
+        <p class="text-sm text-gray-400 mb-2">Follow us:</p>
+        <div class="flex space-x-4">
+          <a href="#" class="hover:text-primary-blue transition-colors"><i data-lucide="facebook"></i></a>
+          <a href="#" class="hover:text-primary-blue transition-colors"><i data-lucide="instagram"></i></a>
+          <a href="#" class="hover:text-primary-blue transition-colors"><i data-lucide="twitter"></i></a>
+          <a href="#" class="hover:text-primary-blue transition-colors"><i data-lucide="linkedin"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Divider -->
+  <div class="border-t border-gray-700 mt-12 pt-6 text-center">
+    <p class="text-sm text-gray-500">
+      &copy; 2025 <span class="text-primary-blue font-semibold">Medipin Health Finder</span> — Empowering better healthcare decisions.
+    </p>
+  </div>
+</footer>
+
+    <!-- 8. Appointment Booking Modal (Quick Booking UI) -->
+    <div id="appointment-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center modal-backdrop transition-opacity duration-300 ease-out opacity-0">
+        <div class="bg-white w-full max-w-lg mx-4 p-8 rounded-xl shadow-2xl transform scale-95 transition-transform duration-300 ease-out">
+            <div class="flex justify-between items-center mb-6 border-b pb-3">
+                <h3 class="text-2xl font-bold text-primary-dark">Quick Booking Request</h3>
+                <button onclick="toggleModal(false)" class="text-gray-400 hover:text-gray-700 transition-colors" aria-label="Close modal">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <form id="appointment-form" class="space-y-4">
+                <p class="text-sm text-gray-600">Submit this form to have a representative call you back to schedule an appointment with a nearby provider.</p>
+                <div>
+                    <label for="modal-name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                    <input type="text" id="modal-name" name="name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue">
+                </div>
+                <div>
+                    <label for="modal-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="modal-email" name="email" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue">
+                </div>
+                <div>
+                    <label for="modal-specialty" class="block block text-sm font-medium text-gray-700 mb-1">Desired Specialty</label>
+                    <select id="modal-specialty" name="specialty" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue">
+                        <option value="">Select Specialty</option>
+                        <option value="General">General Check-up</option>
+                        <option value="Cardiology">Cardiology</option>
+                        <option value="Pediatrics">Pediatrics</option>
+                        <option value="Dermatology">Dermatology</option>
+                        <option value="Wellness">Wellness/Nutrition</option>
+                    </select>
+                </div>
+                
+                <div id="modal-message" class="hidden p-3 text-sm rounded-lg" role="status"></div>
+
+                <button type="submit" class="w-full bg-primary-blue text-white py-3 rounded-xl font-bold hover:bg-opacity-90 transition duration-300 shadow-md">
+                    Submit Request
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- 9. JavaScript for Interactivity and Icons -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // --- Mobile Menu Toggle Logic ---
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+
+
+        // --- Appointment Modal Logic (Replacing alert/confirm) ---
+        const modal = document.getElementById('appointment-modal');
+        const modalContent = modal.querySelector('div:nth-child(1)');
+        const form = document.getElementById('appointment-form');
+        const messageBox = document.getElementById('modal-message');
+
+        function toggleModal(show) {
+            if (show) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.add('opacity-100');
+                    modalContent.classList.remove('scale-95');
+                    modalContent.classList.add('scale-100');
+                }, 10); // Small delay to trigger transition
+            } else {
+                modal.classList.remove('opacity-100');
+                modalContent.classList.remove('scale-100');
+                modalContent.classList.add('scale-95');
+                
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    // Reset message box and form state
+                    messageBox.classList.add('hidden');
+                    form.reset();
+                }, 300); // Wait for transition to finish
+            }
+        }
+        
+        // Close modal when clicking outside of it
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                toggleModal(false);
+            }
+        });
+
+        // Form submission handling
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Simple mock submission logic
+            const name = document.getElementById('modal-name').value;
+            const specialty = document.getElementById('modal-specialty').value;
+
+            // Display success message
+            messageBox.textContent = `Thank you, ${name}! We are searching for a ${specialty} provider near you and will call you to schedule soon.`;
+            messageBox.classList.remove('hidden');
+            messageBox.classList.add('bg-green-100', 'text-green-800');
+            messageBox.classList.remove('bg-red-100', 'text-red-800');
+            
+            // Note: In a real app, you would send this data to a server here.
+        });
+
+    </script>
+    
+   
+
+
+     <script src="index.js"></script>
+
+
+
+
+</body>
+</html>
