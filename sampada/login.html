@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediPin | Secure Login/Register</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Configure Tailwind -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'primary-blue': '#4a95a6',
+            'primary-dark': '#1e3a45',
+            'accent-light': '#e6f7ff',
+            'soft-gray': '#f5f7fa',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background: radial-gradient(circle at top left, #e6f7ff, #ffffff, #f5f7fa);
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex;
+    }
+    .bg-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(150px);
+      opacity: 0.5;
+      z-index: 0;
+      transition: all 1s ease-in-out;
+    }
+    .blob1 { top: -100px; left: -100px; width: 400px; height: 400px; background: #4a95a6; animation: pulseBlob1 15s infinite alternate; }
+    .blob2 { bottom: -120px; right: -120px; width: 450px; height: 450px; background: #1e3a45; animation: pulseBlob2 18s infinite alternate; }
+    @keyframes pulseBlob1 {
+      0% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.1) translate(20px, 20px); opacity: 0.6; }
+      100% { transform: scale(1); opacity: 0.5; }
+    }
+    @keyframes pulseBlob2 {
+      0% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.1) translate(-20px, -20px); opacity: 0.6; }
+      100% { transform: scale(1); opacity: 0.5; }
+    }
+    .glass-card {
+      backdrop-filter: blur(15px);
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      border: 1px solid rgba(255,255,255,0.5);
+      animation: slideIn 0.8s ease-out forwards;
+    }
+    @keyframes slideIn {
+      0% {opacity: 0; transform: translateX(20px);}
+      100% {opacity: 1; transform: translateX(0);}
+    }
+    input:focus {
+      outline: none;
+      border-color: #4a95a6 !important;
+      box-shadow: 0 0 0 3px rgba(74, 149, 166, 0.2);
+    }
+    .login-btn {
+      background: linear-gradient(90deg, #4a95a6, #1e3a45);
+      transition: all 0.3s ease;
+    }
+    .login-btn:hover {
+      background: linear-gradient(90deg, #3e7f8e, #142a33);
+      box-shadow: 0 5px 15px rgba(74, 149, 166, 0.3);
+    }
+    .hero-gradient {
+      background: linear-gradient(135deg, #4a95a6, #a4d8e5);
+    }
+    #messageBox {
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0s, opacity 0.5s ease;
+    }
+    #messageBox.active {
+        visibility: visible;
+        opacity: 1;
+    }
+  </style>
+</head>
+<body class="items-center justify-center relative p-4 md:p-0">
+  <!-- Animated blobs -->
+  <div class="bg-blob blob1"></div>
+  <div class="bg-blob blob2"></div>
+  <!-- Main Card -->
+  <div class="flex flex-col md:flex-row w-full max-w-6xl h-auto md:h-[90vh] z-10 rounded-3xl shadow-2xl overflow-hidden my-auto">
+   <!-- Left side (Hero Section) -->
+<div class="hidden md:flex flex-col justify-center items-center w-1/2 hero-gradient text-white p-12 relative">
+  <div class="text-6xl font-extrabold flex items-center gap-3 mb-4">
+    <i class="bi bi-heart-pulse-fill"></i> MediPin
+  </div>
+  <p class="text-xl mb-10 opacity-90 tracking-wide">Secure, Fast, and Reliable Healthcare Navigation</p>
+  <!-- Placeholder Image -->
+  <img src="photos/login.png" onerror="this.onerror=null;this.src='https://placehold.co/400x300/e6f7ff/1e3a45?text=Secure+Map';" alt="Map and location illustration">
+  <h2 class="pt-6 text-3xl font-bold text-white/95 text-center leading-snug">
+  Find Verified Hospitals & Clinics.
+</h2>
+</div>
+    <!-- Right side (Form) -->
+    <div class="flex justify-center items-center w-full md:w-1/2 p-5 bg-white/10">
+      <div class="glass-card w-full max-w-md rounded-2xl p-8 sm:p-10">
+        <h2 id="form-title" class="text-3xl font-extrabold text-center text-primary-dark mb-8 flex items-center justify-center gap-3">
+          <i class="bi bi-lock-fill"></i> Login to Your Account
+        </h2>
+        <form id="authForm" class="space-y-4">
+          
+          <!-- Name Group (Registration Only) -->
+          <div id="name-group" class="hidden">
+            <label for="name" class="block text-gray-700 font-semibold mb-2">Full Name <span class="text-red-500">*</span></label>
+            <div class="relative">
+              <i class="bi bi-person-badge-fill absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              <input type="text" id="name" placeholder="Enter your full name"
+                     class="w-full p-3 pl-10 rounded-xl border border-gray-300 transition-all" autocomplete="name">
+            </div>
+          </div>
+          <!-- Username/Email Group -->
+          <div>
+            <label for="username" class="block text-gray-700 font-semibold mb-2">Email</label>
+            <div class="relative">
+              <i class="bi bi-envelope-fill absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              <input type="email" id="username" placeholder="Enter your email address"
+                     class="w-full p-3 pl-10 rounded-xl border border-gray-300 transition-all" autocomplete="email">
+            </div>
+          </div>
+          <!-- Password Group -->
+          <div>
+            <label for="password" class="block text-gray-700 font-semibold mb-2">Password</label>
+            <div class="relative">
+              <i class="bi bi-key-fill absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              <input type="password" id="password" placeholder="Enter your password"
+                     class="w-full p-3 pl-10 rounded-xl border border-gray-300 transition-all" autocomplete="current-password">
+            </div>
+          </div>
+          <!-- Confirm Password Group (Registration Only) -->
+          <div id="confirm-password-group" class="hidden">
+            <label for="confirm-password" class="block text-gray-700 font-semibold mb-2">Confirm Password <span class="text-red-500">*</span></label>
+            <div class="relative">
+              <i class="bi bi-shield-lock-fill absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              <input type="password" id="confirm-password" placeholder="Confirm your password"
+                     class="w-full p-3 pl-10 rounded-xl border border-gray-300 transition-all" autocomplete="new-password">
+            </div>
+          </div>
+          
+         
+          <div id="forgot-password-group" class="flex justify-end text-sm pt-2">
+            <a href="forgot.html" class="text-primary-blue hover:underline font-medium">Forgot Password?</a>
+          </div>
+          <button type="submit" id="submit-btn"
+                  class="login-btn w-full mt-6 text-white py-3 rounded-xl font-bold text-lg shadow-xl shadow-primary-blue/30">
+            <i class="bi bi-box-arrow-in-right"></i> Log In
+          </button>
+
+          <!-- Separator for social sign-in -->
+          <div class="relative flex items-center justify-center my-6">
+            <div class="absolute w-full h-px bg-gray-300"></div>
+            <span class="relative z-10 bg-white/90 px-4 text-sm font-medium text-gray-500 rounded-full">OR</span>
+          </div>
+
+          <!-- Google Sign-In Button -->
+        <button type="button" id="google-sign-in-btn"
+        class="w-full flex items-center justify-center gap-2 bg-white text-gray-700 py-3 rounded-xl font-bold border border-gray-300 hover:bg-soft-gray transition-colors shadow-md">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/512px-Google_%22G%22_logo.svg.png"
+       alt="Google Logo" class="w-5 h-5">
+         Sign In with Google
+          </button>
+
+<script>
+  document.getElementById("google-sign-in-btn").addEventListener("click", function () {
+      // Redirect to Spring Boot Google OAuth2 endpoint
+      window.location.href = "http://localhost:8080/oauth2/authorization/google";
+  });
+</script>
+
+
+
+        </form>
+        <p class="text-center text-gray-600 mt-6 text-sm">
+          <span id="toggle-text">Don't have an account?</span>
+          <a href="#" id="toggle-link" class="text-primary-blue font-semibold hover:underline ml-1">Register Here</a>
+        </p>
+        <p class="text-center text-gray-400 mt-8 text-xs">
+          © 2025 MediPin | Developed with Care
+        </p>
+      </div>
+    </div>
+  </div>
+  <!-- Message Modal -->
+  <div id="messageBox" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 shadow-2xl max-w-sm w-full transform scale-100 transition-transform duration-300">
+      <div id="messageIcon" class="text-4xl text-center mb-4"></div>
+      <p id="messageText" class="text-lg font-medium text-center text-gray-700 mb-4"></p>
+      <button onclick="document.getElementById('messageBox').classList.remove('active')"
+              class="w-full bg-primary-blue text-white py-2 rounded-lg font-semibold hover:bg-primary-blue/80 transition-colors">
+        Dismiss
+      </button>
+    </div>
+  </div>
+
+  <!-- Firebase CDN Imports -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    
+    // Global variables (MANDATORY)
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+    
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Initial Authentication Check
+    (async () => {
+      try {
+        if (initialAuthToken) {
+          await signInWithCustomToken(auth, initialAuthToken);
+        } else {
+          await signInAnonymously(auth);
+        }
+        console.log("Firebase initialized and authenticated.");
+      } catch (error) {
+        console.error("Firebase authentication failed:", error);
+      }
+    })();
+
+    // --- Utility Functions ---
+    function showMessage(type, message, redirectUrl = null) {
+      const box = document.getElementById('messageBox');
+      const icon = document.getElementById('messageIcon');
+      const text = document.getElementById('messageText');
+      let iconClass = '';
+      let iconColor = '';
+      
+      switch (type) {
+        case 'success': iconClass = 'bi bi-check-circle-fill'; iconColor = 'text-green-500'; break;
+        case 'error': iconClass = 'bi bi-x-octagon-fill'; iconColor = 'text-red-500'; break;
+        case 'warning': iconClass = 'bi bi-exclamation-triangle-fill'; iconColor = 'text-yellow-500'; break;
+        default: iconClass = 'bi bi-info-circle-fill'; iconColor = 'text-gray-500'; break;
+      }
+      icon.className = `${iconClass} ${iconColor}`;
+      text.textContent = message;
+      box.classList.add('active');
+      if (redirectUrl) {
+        setTimeout(() => {
+          box.classList.remove('active');
+          window.location.href = redirectUrl;
+        }, 1500);
+      }
+    }
+    
+    // --- UI Elements and State ---
+    let isLoginMode = true;
+    const formTitle = document.getElementById('form-title');
+    const submitBtn = document.getElementById('submit-btn');
+    const toggleText = document.getElementById('toggle-text');
+    const toggleLink = document.getElementById('toggle-link');
+    const nameGroup = document.getElementById('name-group');
+    // const locationGroup = document.getElementById('location-group'); // Removed as not used in original script for form logic
+    const confirmPasswordGroup = document.getElementById('confirm-password-group');
+    const forgotPasswordGroup = document.getElementById('forgot-password-group');
+    const authForm = document.getElementById('authForm');
+    const googleSignInBtn = document.getElementById('google-sign-in-btn');
+
+    const nameInput = document.getElementById("name");
+    const usernameInput = document.getElementById("username"); // Used for email
+    const passwordInput = document.getElementById("password");
+    const confirmPasswordInput = document.getElementById("confirm-password");
+
+    // --- UI Update Logic ---
+    function updateFormView() {
+      if (isLoginMode) {
+        // Login View
+        formTitle.innerHTML = '<i class="bi bi-lock-fill"></i> Account Access';
+        submitBtn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Log In (Email/Pass)';
+        toggleText.textContent = "Don't have an account?";
+        toggleLink.textContent = "Register Here";
+        
+        // Hide registration-specific fields
+        nameGroup.classList.add('hidden');
+        confirmPasswordGroup.classList.add('hidden');
+        
+        // Show login-specific fields/links
+        forgotPasswordGroup.classList.remove('hidden');
+      } else {
+        // Register View
+        formTitle.innerHTML = '<i class="bi bi-person-plus-fill"></i> Create Account';
+        submitBtn.innerHTML = '<i class="bi bi-person-fill-add"></i> Register Now';
+        toggleText.textContent = "Already have an account?";
+        toggleLink.textContent = "Log In Here";
+        
+        // Show registration-specific fields
+        nameGroup.classList.remove('hidden');
+        confirmPasswordGroup.classList.remove('hidden');
+        
+        // Hide login-specific fields/links
+        forgotPasswordGroup.classList.add('hidden');
+      }
+      authForm.reset();
+      usernameInput.focus();
+    }
+    
+    // --- Event Listeners ---
+    toggleLink.addEventListener('click', e => {
+      e.preventDefault();
+      isLoginMode = !isLoginMode;
+      updateFormView();
+    });
+
+    // Email/Password Form Submission
+    authForm.addEventListener("submit", async event => {
+      event.preventDefault();
+      
+      const email = usernameInput.value.trim();
+      const password = passwordInput.value.trim();
+      
+      if (!email || !password) {
+        return showMessage("warning", "Please provide both email and password.");
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = isLoginMode ? "Logging In..." : "Registering...";
+
+      try {
+        if (isLoginMode) {
+          // --- LOGIN LOGIC (Firebase) ---
+          await signInWithEmailAndPassword(auth, email, password);
+          showMessage("success", "Login successful! Redirecting...", "dashboard.html");
+        } else {
+          // --- REGISTRATION LOGIC (Firebase) ---
+          const name = nameInput.value.trim();
+          const confirmPassword = confirmPasswordInput.value.trim();
+          
+          if (!name) throw new Error("The Full Name field is required for registration.");
+          if (password.length < 6) throw new Error("Password must be at least 6 characters.");
+          if (password !== confirmPassword) throw new Error("Passwords do not match.");
+          
+          await createUserWithEmailAndPassword(auth, email, password);
+          
+          // Note: In a real app, you would use updateProfile to add the name here.
+          // For simplicity in this single file demo, we rely on the core registration.
+
+          showMessage("success", "Registration successful! Please log in.");
+          isLoginMode = true;
+          updateFormView();
+        }
+      } catch (error) {
+        console.error("Authentication Error:", error);
+        let message = "An unknown error occurred. Please try again.";
+        if (error.code) {
+            message = error.message.replace(/Firebase: |\(auth.*\)/g, '').trim();
+        } else if (error.message) {
+             message = error.message;
+        }
+        showMessage("error", message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = isLoginMode ? "Secure Log In" : "Register Now";
+        updateFormView(); // Re-update button text
+      }
+    });
+
+    // --- Google Sign-In Logic (New) ---
+    googleSignInBtn.addEventListener('click', handleGoogleSignIn);
+
+    async function handleGoogleSignIn() {
+        const provider = new GoogleAuthProvider();
+        googleSignInBtn.disabled = true;
+        googleSignInBtn.innerHTML = `<i class="bi bi-arrow-clockwise animate-spin"></i> Signing in with Google...`;
+
+        try {
+            await signInWithPopup(auth, provider);
+            showMessage("success", "Google Sign-in successful! Redirecting...", "dashboard.html");
+        } catch (error) {
+            console.error("Google Sign-in Error:", error);
+            let message = "Google sign-in failed. Please try again.";
+            if (error.code === 'auth/popup-closed-by-user') {
+                message = "Sign-in popup was closed. Please try again.";
+            } else if (error.message) {
+                // Generic error handler
+                message = error.message.replace(/Firebase: |\(auth.*\)/g, '').trim();
+            }
+            showMessage("error", message);
+        } finally {
+            googleSignInBtn.disabled = false;
+            googleSignInBtn.innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/512px-Google_%22G%22_logo.svg.png" alt="Google Logo" class="w-5 h-5"> Sign In with Google`;
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', updateFormView);
+    // console.log("Database Schema (for backend reference):", `CREATE TABLE users (user_id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, password TEXT NOT NULL, location TEXT, role VARCHAR(20) DEFAULT 'USER');`);
+  </script>
+
+  <script src="login.js"></script>
+  
+</body>
+</html>
