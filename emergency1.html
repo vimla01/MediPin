@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Medipin - Emergency & Urgent Care</title>
+
+    <!-- Tailwind CDN (dev only) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide icons -->
+    <script defer src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'primary-blue': '#4a95a6',
+              'primary-dark': '#1e3a45',
+              'accent-light': '#e6f7ff',
+              'soft-gray': '#f5f7fa',
+              'location-bg': '#f0faff',
+              'emergency-red': '#dc2626',
+              'emergency-dark': '#b91c1c'
+            },
+            fontFamily: {
+              sans: ['Inter','system-ui','-apple-system','Segoe UI','Roboto','Helvetica','Arial']
+            }
+          }
+        }
+      }
+    </script>
+
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+      html{scroll-behavior:smooth}
+
+      /* Reverted: site uses neutral page background (no full-page photo) */
+      body {
+        background: #f7fafc; /* soft neutral background */
+        color: #0f1720;
+        position: relative;
+        min-height: 100vh;
+      }
+
+      /* ensure content stacks correctly */
+      header, main, footer, .triage-step, .card-shadow { position: relative; z-index: 1; }
+
+      /* Visual tokens (fallback when not using Tailwind build) */
+      :root{
+        --primary-blue:#4a95a6;
+        --primary-dark:#1e3a45;
+        --emergency-red:#dc2626;
+        --emergency-dark:#b91c1c;
+      }
+
+      /* hero gradient restored */
+      .hero-emergency{background: linear-gradient(180deg, #1e3a45 0%, #102B33 100%);} 
+
+      /* soft card shadow */
+      .card-shadow{box-shadow:0 10px 20px rgba(74,149,166,0.12);transition:transform .25s,box-shadow .25s}
+      .card-shadow:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(16,43,51,0.12)}
+
+      /* lucide fallback sizing */
+      .lucide{width:28px;height:28px}
+
+      /* accordion transitions */
+      .triage-accordion-content{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.8,0,.2,1)}
+      .triage-accordion-content.active{max-height:520px}
+
+      /* better focus outlines */
+      :where(button,a,input){outline:transparent}
+      :where(button,a,input):focus-visible{outline:0;box-shadow:0 0 0 4px rgba(74,149,166,.12);border-radius:12px}
+
+      /* Button system (plain CSS, no @apply) */
+      .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;border-radius:1rem;font-weight:600;cursor:pointer;transition:transform .12s ease,box-shadow .12s ease}
+      .btn:active{transform:translateY(1px)}
+
+      .btn-primary{background-image:linear-gradient(135deg,var(--emergency-red),var(--emergency-dark));color:#fff;box-shadow:0 12px 30px rgba(220,38,38,0.12)}
+      .btn-secondary{background:rgba(255,255,255,.95);color:var(--primary-dark);box-shadow:0 8px 18px rgba(16,43,51,0.06);border:1px solid rgba(0,0,0,0.04)}
+      .btn-ghost{background:transparent;color:var(--primary-dark)}
+      .btn-lg{padding:.9rem 1.25rem;font-size:1.05rem}
+      .btn-sm{padding:.45rem .75rem;font-size:.9rem}
+
+      /* mobile menu animation helpers */
+      #mobile-menu{transition:transform .2s ease,opacity .2s ease}
+      #mobile-menu.open{transform:none;opacity:1}
+      #mobile-menu.closed{transform:translateY(-6px);opacity:0}
+
+      /* ensure cards stay white for readability */
+      #assessment-questions, .card-shadow { background: rgba(255,255,255,1); }
+
+      /* small helpers used across the page */
+      .accent-left{position:relative}
+      .accent-left::before{content:'';position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--emergency-red);border-radius:6px}
+
+      /* responsive tweaks */
+      @media (max-width:640px){
+        .hero-emergency h1{font-size:1.75rem}
+        .btn-lg{font-size:1rem;padding:.75rem 1rem}
+      }
+    </style>
+</head>
+<body class="font-sans text-gray-800 bg-white">
+
+<!-- TOP BAR -->
+  <div class="bg-primary-blue text-white text-sm py-2 hidden sm:block">
+    <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+      <p>📞 24/7 Helpline: <span class="font-semibold">(555) 123-HELP</span></p>
+      <div class="flex items-center space-x-4">
+        <a href="aboutus.html" class="hover:underline">About</a>
+        <a href="faq.html" class="hover:underline">FAQ</a>
+        <a href="contact.html" class="hover:underline">Contact</a>
+      </div>
+    </div>
+  </div>
+
+ <!-- Main Header -->
+<header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-md border-b border-gray-100 transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-20">
+      
+      <!-- Logo -->
+      <a href="index.html" class="flex items-center space-x-2 text-primary-dark hover:text-primary-blue transition-colors">
+        <i data-lucide="map-pin" class="text-primary-blue"></i>
+        <span class="text-2xl font-extrabold tracking-tight">Medipin</span>
+      </a>
+      
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex space-x-8 text-gray-600 font-medium">
+        <a href="hospitals.html" class="hover:text-primary-blue transition-colors relative after:absolute after:left-0 after:bottom-[-4px] after:w-0 after:h-[2px] after:bg-primary-blue hover:after:w-full after:transition-all after:duration-300">Hospitals</a>
+        <a href="clinics.html" class="hover:text-primary-blue transition-colors relative after:absolute after:left-0 after:bottom-[-4px] after:w-0 after:h-[2px] after:bg-primary-blue hover:after:w-full after:transition-all after:duration-300">Clinics</a>
+        
+        <a href="emergency1.html" class="hover:text-primary-blue transition-colors relative after:absolute after:left-0 after:bottom-[-4px] after:w-0 after:h-[2px] after:bg-primary-blue hover:after:w-full after:transition-all after:duration-300">Emergency</a>
+      </nav>
+
+    
+
+
+      <div class="flex items-center gap-4">
+  <!-- Login / Register -->
+  <div id="auth-ui-container" class="flex gap-2">
+    <a href="login.html" class="bg-primary-blue text-white px-5 py-2 rounded-full font-semibold shadow hover:bg-primary-dark transition duration-300">
+      Login / Sign up
+    </a>
+  </div>
+
+  <!-- User Profile Menu -->
+  <div class="relative hidden" id="userMenuContainer">
+    <button id="userMenuBtn" class="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-200 transition">
+      <img id="userAvatar" src="https://i.pravatar.cc/150?u=default" class="w-8 h-8 rounded-full" />
+      <span id="userNameDisplay" class="font-medium">Guest</span>
+      <i class="bi bi-caret-down-fill text-gray-600"></i>
+    </button>
+
+    <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-50">
+      <div class="px-4 py-3 border-b">
+        <p id="dropdownName" class="text-sm font-semibold">User</p>
+        <p id="dropdownEmail" class="text-xs text-gray-500 truncate">user@email.com</p>
+      </div>
+      <button id="logoutBtn" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-100">
+        <i class="bi bi-box-arrow-right mr-2"></i> Logout
+      </button>
+    </div>
+  </div>
+</div>
+
+
+      <!-- Mobile Menu Button -->
+      <button id="mobile-menu-btn" class="md:hidden p-2 rounded-md text-primary-dark hover:text-primary-blue focus:outline-none" aria-label="Toggle menu">
+        <i data-lucide="menu"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Dropdown Menu -->
+  <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100">
+    <a href="hospitals.html" class="block py-3 px-4 text-gray-700 hover:bg-accent-light font-medium">Hospitals</a>
+    <a href="clinics.html" class="block py-3 px-4 text-gray-700 hover:bg-accent-light font-medium">Clinics</a>
+    
+    <a href="emergency1.html" class="block py-3 px-4 text-gray-700 hover:bg-accent-light font-medium">Emergency</a>
+
+    <a href="login.html" class="block w-full text-center bg-primary-dark text-white py-3 font-semibold hover:bg-opacity-90 transition duration-300">
+      Login / Sign up
+    </a>
+  </div>
+
+</header>
+
+<main>
+  <!-- hero -->
+  <section class="hero-emergency py-20 text-white">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <i data-lucide="alert-triangle" class="w-16 h-16 mx-auto mb-6 text-emergency-red"></i>
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-4 max-w-2xl mx-auto">Medical Emergency? <span class="text-emergency-red block sm:inline">Act Fast.</span></h1>
+      <p class="text-lg sm:text-xl text-white/90 mb-8 max-w-2xl mx-auto">If you or someone else is in immediate danger, call emergency services first.</p>
+
+      <div class="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6">
+        <a href="tel:108" class="btn btn-primary btn-lg inline-flex items-center gap-3 rounded-2xl">
+          <i data-lucide="phone-call" class="w-5 h-5"></i> CALL 108
+        </a>
+
+        <a href="#assessment" class="btn btn-secondary btn-lg inline-flex items-center gap-3 rounded-2xl">
+          <i data-lucide="clipboard-list" class="w-5 h-5 text-primary-dark"></i> Urgent Care Assessment
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- assessment -->
+  <section id="assessment" class="py-20 sm:py-28 bg-soft-gray">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-center text-primary-dark mb-4">Urgent Care Assessment</h2>
+      <p class="text-lg text-center text-gray-600 mb-10 max-w-3xl mx-auto">Use this quick, three-step guide to determine if you need immediate emergency services (108), urgent care, or if self-care is sufficient.</p>
+
+      <div id="assessment-questions" class="bg-white p-6 rounded-2xl shadow-2xl space-y-4">
+
+        <div class="triage-step" data-step="1">
+          <button id="toggle-q1" aria-controls="q1" aria-expanded="true" class="triage-toggle w-full flex justify-between items-center text-left p-5 bg-accent-light/90 rounded-xl font-semibold text-lg sm:text-xl text-primary-dark border border-accent-light hover:border-primary-blue/30 transition">
+            <span>1. Is the person unconscious, not breathing, or experiencing sudden inability to speak/move?</span>
+            <i data-lucide="chevron-down" class="w-6 h-6 text-primary-blue"></i>
+          </button>
+          <div id="q1" role="region" aria-labelledby="toggle-q1" class="triage-accordion-content active p-4">
+            <div class="flex flex-col sm:flex-row gap-3">
+              <button onclick="nextAssessmentStep(1,'severe-symptoms',true)" class="w-full py-3 bg-emergency-red text-white rounded-lg font-bold shadow-md hover:bg-emergency-dark transition">Yes - Severe Emergency (Call 108)</button>
+              <button onclick="nextAssessmentStep(1,'severe-symptoms',false)" class="w-full py-3 bg-primary-blue text-white rounded-lg font-bold shadow-md hover:bg-primary-dark transition">No - Continue Assessment</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="triage-step hidden" data-step="2">
+          <button id="toggle-q2" aria-controls="q2" aria-expanded="false" class="triage-toggle w-full flex justify-between items-center text-left p-5 bg-accent-light/90 rounded-xl font-semibold text-lg sm:text-xl text-primary-dark border border-accent-light hover:border-primary-blue/30 transition">
+            <span>2. Are there symptoms of major concern (e.g., chest pain, heavy uncontrolled bleeding, bone fracture)?</span>
+            <i data-lucide="chevron-down" class="w-6 h-6 text-primary-blue"></i>
+          </button>
+          <div id="q2" role="region" aria-labelledby="toggle-q2" class="triage-accordion-content p-4">
+            <div class="flex flex-col sm:flex-row gap-3">
+              <button onclick="nextAssessmentStep(2,'urgent-symptoms',true)" class="w-full py-3 bg-emergency-red/80 text-white rounded-lg font-bold shadow-md hover:bg-emergency-dark transition">Yes - Go to Nearest ER</button>
+              <button onclick="nextAssessmentStep(2,'urgent-symptoms',false)" class="w-full py-3 bg-primary-blue text-white rounded-lg font-bold shadow-md hover:bg-primary-dark transition">No - Continue Assessment</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="triage-step hidden" data-step="3">
+          <button id="toggle-q3" aria-controls="q3" aria-expanded="false" class="triage-toggle w-full flex justify-between items-center text-left p-5 bg-accent-light/90 rounded-xl font-semibold text-lg sm:text-xl text-primary-dark border border-accent-light hover:border-primary-blue/30 transition">
+            <span>3. Is it a minor, non-life-threatening issue (e.g., moderate fever, minor sprain, cold/flu symptoms)?</span>
+            <i data-lucide="chevron-down" class="w-6 h-6 text-primary-blue"></i>
+          </button>
+          <div id="q3" role="region" aria-labelledby="toggle-q3" class="triage-accordion-content p-4">
+            <div class="flex flex-col sm:flex-row gap-3">
+              <button onclick="nextAssessmentStep(3,'result-urgent',true)" class="w-full py-3 bg-yellow-600 text-white rounded-lg font-bold shadow-md hover:bg-yellow-700 transition">Yes - Urgent Care Visit Recommended</button>
+              <button onclick="nextAssessmentStep(3,'result-selfcare',false)" class="w-full py-3 bg-green-600 text-white rounded-lg font-bold shadow-md hover:bg-green-700 transition">No - Self-Care Likely</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="assessment-result" class="hidden mt-12 p-8 rounded-3xl shadow-2xl text-center">
+        <h3 id="result-title" class="text-3xl font-extrabold mb-4"></h3>
+        <p id="result-text" class="text-lg mb-8"></p>
+        <div id="result-actions" class="flex justify-center flex-wrap gap-4"></div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer id="contact" class="relative bg-gradient-to-b from-primary-dark to-[#102B33] text-gray-300 pt-16 pb-10">
+  <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-blue via-cyan-400 to-primary-blue"></div>
+  <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-5 gap-y-10 gap-x-12">
+    <div class="col-span-2 md:col-span-1">
+      <a href="index.html" class="flex items-center space-x-2 mb-4">
+        <i data-lucide="map-pin" class="text-primary-blue w-7 h-7"></i>
+        <span class="text-2xl font-extrabold text-white tracking-tight">Medipin</span>
+      </a>
+      <p class="text-sm text-gray-400 leading-relaxed mb-4">Your trusted guide to finding hospitals, clinics, and healthcare specialists near you.</p>
+      <p class="font-semibold text-white">Support: <span class="text-primary-blue">(555) 123-HELP</span></p>
+    </div>
+    <div>
+      <h4 class="text-lg font-semibold text-primary-blue mb-4 border-b border-primary-blue/30 pb-1">Company</h4>
+      <ul class="space-y-2 text-sm"><li><a href="index.html#about" class="hover:text-white">About Us</a></li><li><a href="index.html#faq" class="hover:text-white">FAQ / Help Center</a></li><li><a href="#contact" class="hover:text-white">Contact Us</a></li></ul>
+    </div>
+    <div>
+      <h4 class="text-lg font-semibold text-primary-blue mb-4 border-b border-primary-blue/30 pb-1">Finder Tools</h4>
+      <ul class="space-y-2 text-sm"><li><a href="hospitals.html" class="hover:text-white">Nearby Hospitals</a></li><li><a href="clinics.html" class="hover:text-white">Specialist Clinics</a></li><li><a href="#assessment" class="hover:text-white">Emergency Care Centers</a></li><li><a href="#" class="hover:text-white">Book Appointment</a></li></ul>
+    </div>
+    <div class="col-span-2 md:col-span-1">
+      <h4 class="text-lg font-semibold text-primary-blue mb-4 border-b border-primary-blue/30 pb-1">Top Searches</h4>
+      <ul class="space-y-2 text-sm"><li><a href="#" class="hover:text-white">Pediatricians Near Me</a></li><li><a href="#" class="hover:text-white">Skin & Hair Specialists</a></li><li><a href="#" class="hover:text-white">Physiotherapy Clinics</a></li><li><a href="#" class="hover:text-white">Dental Care</a></li></ul>
+    </div>
+    <div>
+      <h4 class="text-lg font-semibold text-primary-blue mb-4 border-b border-primary-blue/30 pb-1">Legal</h4>
+      <ul class="space-y-2 text-sm mb-6"><li><a href="#" class="hover:text-white">Privacy Policy</a></li><li><a href="#" class="hover:text-white">Terms of Service</a></li></ul>
+      <div><p class="text-sm text-gray-400 mb-2">Follow us:</p><div class="flex space-x-4"><a href="#" class="hover:text-primary-blue"><i data-lucide="facebook"></i></a><a href="#" class="hover:text-primary-blue"><i data-lucide="instagram"></i></a><a href="#" class="hover:text-primary-blue"><i data-lucide="twitter"></i></a><a href="#" class="hover:text-primary-blue"><i data-lucide="linkedin"></i></a></div></div>
+    </div>
+  </div>
+  <div class="border-t border-gray-700 mt-12 pt-6 text-center"><p class="text-sm text-gray-500">&copy; 2025 <span class="text-primary-blue font-semibold">Medipin Health Finder</span> — Empowering better healthcare decisions.</p></div>
+</footer>
+
+<script>
+  // icons
+  document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+
+  // mobile menu logic (toggle class rather than directly toggling hidden so we can animate)
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  mobileMenuBtn?.addEventListener('click', () => {
+    const isOpen = mobileMenu.classList.contains('open');
+    mobileMenu.classList.toggle('open', !isOpen);
+    mobileMenu.classList.toggle('hidden', isOpen);
+    mobileMenuBtn.setAttribute('aria-expanded', String(!isOpen));
+  });
+
+  // accordion toggles (keyboard accessible)
+  document.querySelectorAll('.triage-toggle').forEach(btn => {
+    const panelId = btn.getAttribute('aria-controls');
+    const panel = document.getElementById(panelId);
+    btn.addEventListener('click', () => {
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!expanded));
+      if(panel){
+        panel.classList.toggle('active', !expanded);
+      }
+    });
+
+    btn.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        btn.click();
+      }
+    });
+  });
+
+  // assessment logic (unchanged behavior but safer element access)
+  const assessmentQuestions = document.getElementById('assessment-questions');
+  const assessmentResult = document.getElementById('assessment-result');
+  const assessmentSteps = document.querySelectorAll('.triage-step');
+  let currentStepIndex = 1;
+
+  function closeStep(stepIndex){
+    const stepElement = document.querySelector(`.triage-step[data-step="${stepIndex}"]`);
+    if(!stepElement) return;
+    const content = stepElement.querySelector('.triage-accordion-content');
+    const toggle = stepElement.querySelector('.triage-toggle');
+    if(content) content.classList.remove('active');
+    if(toggle) toggle.setAttribute('aria-expanded','false');
+  }
+
+  function openStep(stepIndex){
+    const stepElement = document.querySelector(`.triage-step[data-step="${stepIndex}"]`);
+    if(!stepElement) return;
+    const content = stepElement.querySelector('.triage-accordion-content');
+    const toggle = stepElement.querySelector('.triage-toggle');
+    stepElement.classList.remove('hidden');
+    void stepElement.offsetHeight;
+    if(content) content.classList.add('active');
+    if(toggle) toggle.setAttribute('aria-expanded','true');
+  }
+
+  window.nextAssessmentStep = function(stepCompleted, resultType, decision){
+    closeStep(stepCompleted);
+    if(decision || stepCompleted === assessmentSteps.length){
+      displayAssessmentResult(resultType);
+      assessmentQuestions?.classList.add('hidden');
+    } else {
+      currentStepIndex++;
+      openStep(currentStepIndex);
+      const nextStepElement = document.querySelector(`.triage-step[data-step="${currentStepIndex}"]`);
+      if (nextStepElement) {
+        // compute offset so content doesn't stick to top (header height + breathing room)
+        const header = document.querySelector('header');
+        const headerHeight = header ? header.getBoundingClientRect().height : 80;
+        const extraGap = 24; // px of breathing room
+        const targetY = nextStepElement.getBoundingClientRect().top + window.scrollY - headerHeight - extraGap;
+        window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+      }
+    }
+  }
+
+  function displayAssessmentResult(type){
+    const titleEl = document.getElementById('result-title');
+    const textEl = document.getElementById('result-text');
+    const actionsEl = document.getElementById('result-actions');
+    if(!titleEl||!textEl||!actionsEl) return;
+    actionsEl.innerHTML = '';
+    currentStepIndex = 1;
+    switch(type){
+      case 'severe-symptoms':
+        assessmentResult.className = 'mt-12 p-8 rounded-3xl shadow-2xl text-center bg-red-50 border-l-8 border-emergency-red';
+        titleEl.textContent = 'CRITICAL EMERGENCY - CALL 108 IMMEDIATELY';
+        titleEl.className = 'text-2xl font-extrabold mb-4 text-emergency-red';
+        textEl.textContent = 'Do not waste time. Call emergency services immediately. If trained, stay calm and follow their instructions. This is a life-threatening situation.';
+        actionsEl.innerHTML = `<a href="tel:108" class="btn btn-primary btn-lg"><i data-lucide="phone-call" class="w-5 h-5 mr-2"></i> Call 108 Now</a> <button onclick="resetAssessment()" class="btn btn-secondary btn-lg">Re-Assess</button>`;
+        break;
+      case 'urgent-symptoms':
+      case 'result-urgent':
+        assessmentResult.className = 'mt-12 p-8 rounded-3xl shadow-2xl text-center bg-yellow-50 border-l-8 border-yellow-600';
+        titleEl.textContent = 'Urgent Medical Attention Required';
+        titleEl.className = 'text-2xl font-extrabold mb-4 text-yellow-700';
+        textEl.textContent = 'Your symptoms require medical attention soon. Proceed to the nearest Urgent Care facility or Emergency Room for evaluation.';
+        actionsEl.innerHTML = `<a href="hospitals.html" class="btn btn-primary btn-lg">Find Nearest Urgent Care</a> <button onclick="resetAssessment()" class="btn btn-secondary btn-lg">Re-Assess</button>`;
+        break;
+      case 'result-selfcare':
+        assessmentResult.className = 'mt-12 p-8 rounded-3xl shadow-2xl text-center bg-green-50 border-l-8 border-green-600';
+        titleEl.textContent = 'Self-Care or Routine Visit';
+        titleEl.className = 'text-2xl font-extrabold mb-4 text-green-700';
+        textEl.textContent = 'Based on your responses, self-care measures or scheduling a routine doctor\'s appointment is likely appropriate. Monitor symptoms closely.';
+        actionsEl.innerHTML = `<a href="clinics.html" class="btn btn-primary btn-lg">Book Routine Appointment</a> <button onclick="resetAssessment()" class="btn btn-secondary btn-lg">Re-Assess</button>`;
+        break;
+    }
+    lucide.createIcons();
+    assessmentResult.classList.remove('hidden');
+  }
+
+  window.resetAssessment = function(){
+    assessmentQuestions?.classList.remove('hidden');
+    assessmentResult?.classList.add('hidden');
+    assessmentSteps.forEach((step, index)=>{
+      closeStep(index+1);
+      if(index===0){step.classList.remove('hidden'); openStep(1);} else {step.classList.add('hidden');}
+    });
+    currentStepIndex = 1;
+    document.getElementById('assessment')?.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  window.addEventListener('load', ()=>{
+    // initial state
+    assessmentSteps.forEach((step, index)=>{
+      if(index>0){step.classList.add('hidden'); const cid = step.getAttribute('data-step'); closeStep(index+1);} else {step.classList.remove('hidden'); openStep(1);}    
+    });
+  });
+</script>
+</body>
+</html>
