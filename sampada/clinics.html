@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediPin | Clinic Finder</title>
+  
+  <!-- External Stylesheets and Scripts -->
+  <link rel="stylesheet" href="clinic.css" />
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <!-- Configure Tailwind for custom colors and Inter font (Must remain inline) -->
+  <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    'primary-blue': '#4a95a6', // Soft Teal/Cyan for primary color
+                    'primary-dark': '#1e3a45',
+                    'accent-light': '#e6f7ff', // Very light blue for subtle background
+                    'soft-gray': '#f5f7fa',
+                    'location-bg': '#f0faff', // Lighter accent for search box
+                },
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                },
+            }
+        }
+    }
+  </script>
+</head>
+<body class="font-sans text-gray-800 bg-white">
+
+  <!-- TOP BAR -->
+  <div class="bg-primary-blue text-white text-sm py-2 hidden sm:block">
+    <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+      <p>📞 24/7 Helpline: <span class="font-semibold">(555) 123-HELP</span></p>
+      <div class="flex items-center space-x-4">
+        <a href="aboutus.html" class="hover:underline">About</a>
+        <a href="faq.html" class="hover:underline">FAQ</a>
+        <a href="contact.html" class="hover:underline">Contact</a>
+      </div>
+    </div>
+  </div>
+
+ <!-- Main Header -->
+<header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-md border-b border-gray-100 transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-20">
+      
+      <!-- Logo -->
+      <a href="index.html" class="flex items-center space-x-2 text-primary-dark hover:text-primary-blue transition-colors">
+        <i data-lucide="map-pin" class="text-primary-blue"></i>
+        <span class="text-2xl font-extrabold tracking-tight">Medipin</span>
+      </a>
+      
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex space-x-8 text-gray-600 font-medium">
+        <a href="hospitals.html" class="hover:text-primary-blue transition-colors relative after:absolute after:left-0 after:bottom-[-4px] after:w-0 after:h-[2px] after:bg-primary-blue hover:after:w-full after:transition-all after:duration-300">Hospitals</a>
+        <a href="clinics.html" class="hover:text-primary-blue transition-colors relative after:absolute after:left-0 after:bottom-[-4px] after:w-0 after:h-[2px] after:bg-primary-blue hover:after:w-full after:transition-all after:duration-300">Clinics</a>
+        
+        <a href="emergency1.html" class="hover:text-primary-blue transition-colors relative after:absolute after:left-0 after:bottom-[-4px] after:w-0 after:h-[2px] after:bg-primary-blue hover:after:w-full after:transition-all after:duration-300">Emergency</a>
+      </nav>
+
+    
+
+
+      <div class="flex items-center gap-4">
+  <!-- Login / Register -->
+  <div id="auth-ui-container" class="flex gap-2">
+    <a href="login.html" class="bg-primary-blue text-white px-5 py-2 rounded-full font-semibold shadow hover:bg-primary-dark transition duration-300">
+      Login / Sign up
+    </a>
+  </div>
+
+  <!-- User Profile Menu -->
+  <div class="relative hidden" id="userMenuContainer">
+    <button id="userMenuBtn" class="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-200 transition">
+      <img id="userAvatar" src="https://i.pravatar.cc/150?u=default" class="w-8 h-8 rounded-full" />
+      <span id="userNameDisplay" class="font-medium">Guest</span>
+      <i class="bi bi-caret-down-fill text-gray-600"></i>
+    </button>
+
+    <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-50">
+      <div class="px-4 py-3 border-b">
+        <p id="dropdownName" class="text-sm font-semibold">User</p>
+        <p id="dropdownEmail" class="text-xs text-gray-500 truncate">user@email.com</p>
+      </div>
+      <button id="logoutBtn" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-100">
+        <i class="bi bi-box-arrow-right mr-2"></i> Logout
+      </button>
+    </div>
+  </div>
+</div>
+
+
+      <!-- Mobile Menu Button -->
+      <button id="mobile-menu-btn" class="md:hidden p-2 rounded-md text-primary-dark hover:text-primary-blue focus:outline-none" aria-label="Toggle menu">
+        <i data-lucide="menu"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Dropdown Menu -->
+  <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100">
+    <a href="hospitals.html" class="block py-3 px-4 text-gray-700 hover:bg-accent-light font-medium">Hospitals</a>
+    <a href="clinics.html" class="block py-3 px-4 text-gray-700 hover:bg-accent-light font-medium">Clinics</a>
+    
+    <a href="emergency1.html" class="block py-3 px-4 text-gray-700 hover:bg-accent-light font-medium">Emergency</a>
+
+    <a href="login.html" class="block w-full text-center bg-primary-dark text-white py-3 font-semibold hover:bg-opacity-90 transition duration-300">
+      Login / Sign up
+    </a>
+  </div>
+
+</header>
+
+  <!-- SEARCH SECTION -->
+  <section class="w-full text-center py-10 bg-soft-gray">
+    <h1 class="text-3xl font-bold text-primary-dark mb-2">Nearby Clinics Finder</h1>
+    <p class="text-gray-600 mb-8">Search and locate nearby clinics instantly on the map for quick consultations and primary care.</p>
+    <div class="flex justify-center gap-3 flex-wrap px-4 max-w-5xl mx-auto">
+      <div class="search-input-group flex items-center w-full md:flex-1 bg-white shadow-md rounded-xl px-4 py-2 border border-gray-200 transition">
+        <i data-lucide="map-pin" class="text-primary-blue w-5 h-5 mr-3"></i>
+        <input id="searchCity" type="text" placeholder="Search by Name, City, or Specialty (e.g., Bandra, Dental, General Practice)"
+          class="flex-1 outline-none p-2 text-gray-700">
+      </div>
+      <select
+  id="specialization"
+  class="w-full md:w-[200px] bg-white shadow-md rounded-xl border border-gray-200 p-4 focus:ring-2 ring-primary-blue transition"
+>
+  <option value="">All Specialties</option>
+ 
+  <option value="Cardiology">Cardiology</option>
+  <option value="Neurology">Neurology</option>
+  <option value="Pediatrics">Pediatrics</option>
+  <option value="Gynecologist">Gynecologist</option>
+  <option value="ENT Specialist">ENT Specialist</option>
+  <option value="Pediatrician">Pediatrician</option>
+  <option value="Dermatologist">Dermatologist</option>
+  <option value="Dentist">Dentist</option>
+  <option value="Physiotherapist">Physiotherapist</option>
+</select>
+      <button onclick="filterClinics()"
+        class="btn-primary text-white w-full md:w-auto px-6 py-4 rounded-xl shadow-md flex items-center justify-center gap-2 font-medium">
+        <i data-lucide="search" class="w-5 h-5"></i> Search
+      </button>
+    </div>
+  </section>
+
+  <!-- MAIN SECTION (Clinics List and Map) -->
+  <main class="flex flex-col lg:flex-row gap-6 px-4 md:px-8 pb-10 flex-1 overflow-hidden">
+    <!-- CLINIC LIST LEFT -->
+    <aside class="w-full lg:w-[35%] glass rounded-3xl p-6 overflow-hidden flex flex-col">
+      <h3 class="text-xl font-semibold text-primary-dark mb-4">
+        <i data-lucide="stethoscope" class="w-5 h-5 inline-block mr-2"></i> Clinics Found (<span id="count">0</span>)
+      </h3>
+      <div id="clinicList" class="space-y-4 text-gray-600 overflow-y-auto list-container">
+        <!-- Clinic cards will be injected here -->
+        <p class="text-center text-gray-500">Loading clinic data...</p>
+      </div>
+    </aside>
+
+    <!-- MAP RIGHT -->
+    <section class="w-full lg:w-[65%] rounded-3xl overflow-hidden glass">
+      <div id="map" class="h-full"></div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer id="contact" class="relative bg-gradient-to-b from-primary-dark to-[#102B33] text-gray-300 pt-16 pb-10">
+    <!-- Decorative Top Border -->
+    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-blue via-cyan-400 to-primary-blue"></div>
+
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-5 gap-12">
+      
+      <!-- Brand Section -->
+      <div>
+        <a href="#" class="flex items-center space-x-2 mb-4">
+          <i data-lucide="map-pin" class="text-primary-blue w-6 h-6"></i>
+          <span class="text-2xl font-extrabold text-white tracking-tight">Medipin</span>
+        </a>
+        <p class="text-sm text-gray-400 leading-relaxed mb-4">
+          Your trusted guide to finding hospitals, clinics, and healthcare specialists near you.
+        </p>
+        <p class="font-semibold text-white">
+          Need Help? <span class="text-primary-blue">(555) 123-HELP</span>
+        </p>
+        <p class="text-sm text-gray-400 mt-1">
+          Available 24/7 for emergency support.
+        </p>
+      </div>
+
+      <!-- (Company) -->
+      <div>
+        <h4 class="text-lg font-semibold text-primary-blue mb-4">Company</h4>
+        <ul class="space-y-2">
+          <li><a href="#" class="hover:text-white transition-colors">About Us</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">FAQ / Help Center</a></li>
+          <li><a href="#contact" class="hover:text-white transition-colors">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <!-- Finder Tools -->
+      <div>
+        <h4 class="text-lg font-semibold text-primary-blue mb-4">Finder Tools</h4>
+        <ul class="space-y-2">
+          <li><a href="#" class="hover:text-white transition-colors">Nearby Hospitals</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Specialist Clinics</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Emergency Care Centers</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Health Insurance Partners</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Book Appointment</a></li>
+        </ul>
+      </div>
+
+      <!-- Top Searches -->
+      <div>
+        <h4 class="text-lg font-semibold text-primary-blue mb-4">Top Searches</h4>
+        <ul class="space-y-2">
+          <li><a href="#" class="hover:text-white transition-colors">Pediatricians Near Me</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Skin & Hair Specialists</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Physiotherapy Clinics</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Dental & Orthodontic Care</a></li>
+        </ul>
+      </div>
+
+      
+      <!-- Legal -->
+      <div>
+        <h4 class="text-lg font-semibold text-primary-blue mb-4">Legal</h4>
+        <ul class="space-y-2 mb-6">
+          <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Accessibility</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Contact & Feedback</a></li>
+        </ul>
+
+        <!-- Social Icons -->
+        <div>
+          <p class="text-sm text-gray-400 mb-2">Follow us:</p>
+          <div class="flex space-x-4">
+            <a href="#" class="hover:text-primary-blue transition-colors"><i data-lucide="facebook" class="w-5 h-5"></i></a>
+            <a href="#" class="hover:text-primary-blue transition-colors"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+            <a href="#" class="hover:text-primary-blue transition-colors"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+            <a href="#" class="hover:text-primary-blue transition-colors"><i data-lucide="linkedin" class="w-5 h-5"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="border-t border-gray-700 mt-12 pt-6 text-center">
+      <p class="text-sm text-gray-500">
+        &copy; 2025 <span class="text-primary-blue font-semibold">Medipin Health Finder</span> — Empowering better healthcare decisions.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Appointment Booking Modal (Quick Booking UI) -->
+  <div id="appointment-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center modal-backdrop transition-opacity duration-300 ease-out opacity-0">
+    <div class="bg-white w-full max-w-lg mx-4 p-8 rounded-xl shadow-2xl transform scale-95 transition-transform duration-300 ease-out">
+        <div class="flex justify-between items-center mb-6 border-b pb-3">
+            <h3 class="text-2xl font-bold text-primary-dark">Quick Booking Request</h3>
+            <button onclick="toggleModal(false)" class="text-gray-400 hover:text-gray-700 transition-colors" aria-label="Close modal">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+        
+        <form id="appointment-form" class="space-y-4">
+            <p class="text-sm text-gray-600">Submit this form to have a representative call you back to schedule an appointment with a nearby provider.</p>
+            <div>
+                <label for="modal-name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <input type="text" id="modal-name" name="name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue">
+            </div>
+            <div>
+                <label for="modal-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input type="email" id="modal-email" name="email" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue">
+            </div>
+            <div>
+                <label for="modal-specialty" class="block block text-sm font-medium text-gray-700 mb-1">Desired Specialty</label>
+                <!-- Clinic Modal Specialties -->
+                <select id="modal-specialty" name="specialty" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-blue focus:border-primary-blue">
+                    <option value="">Select Specialty</option>
+                    <option value="General">General Check-up</option>
+                    <option value="Dental">Dental</option>
+                    <option value="Pediatrics">Pediatrics</option>
+                    <option value="Dermatology">Dermatology</option>
+                    <option value="Physiotherapy">Physiotherapy</option>
+                </select>
+            </div>
+            
+            <div id="modal-message" class="hidden p-3 text-sm rounded-lg" role="status"></div>
+
+            <button type="submit" class="w-full bg-primary-blue text-white py-3 rounded-xl font-bold hover:bg-opacity-90 transition duration-300 shadow-md">
+                Submit Request
+            </button>
+        </form>
+    </div>
+  </div>
+
+
+  <!-- Review Modal -->
+<div id="review-modal" class="fixed inset-0 z-[200] hidden items-center justify-center bg-black/50">
+  <div class="bg-white w-full max-w-md mx-4 p-6 rounded-xl shadow-2xl relative">
+    <h3 id="reviewModalTitle" class="text-xl font-bold text-primary-dark mb-3">Add Review</h3>
+
+    <form id="reviewForm" class="space-y-4">
+      <input type="hidden" id="reviewFacilityId">
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Rating (1–5)</label>
+        <select id="reviewStars" required class="w-full p-2 border rounded-lg focus:ring-primary-blue">
+          <option value="">Select Stars</option>
+          <option value="1">⭐ 1</option>
+          <option value="2">⭐⭐ 2</option>
+          <option value="3">⭐⭐⭐ 3</option>
+          <option value="4">⭐⭐⭐⭐ 4</option>
+          <option value="5">⭐⭐⭐⭐⭐ 5</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Your Review</label>
+        <textarea id="reviewText" rows="3" required class="w-full p-2 border rounded-lg focus:ring-primary-blue"></textarea>
+      </div>
+
+      <div class="flex justify-end gap-2">
+        <button type="button" onclick="closeReviewModal()" class="px-4 py-2 rounded-lg border">Cancel</button>
+        <button type="submit" class="px-4 py-2 bg-primary-blue text-white rounded-lg hover:bg-primary-dark">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- View Reviews Modal -->
+<div id="view-reviews-modal" class="fixed inset-0 z-[200] hidden items-center justify-center bg-black/50">
+  <div class="bg-white w-full max-w-lg mx-4 p-6 rounded-xl shadow-2xl relative">
+    <h3 id="reviewsModalTitle" class="text-xl font-bold text-primary-dark mb-3">Reviews</h3>
+
+    <div id="reviewsList" class="max-h-80 overflow-y-auto space-y-3">
+      <!-- Reviews will load here dynamically -->
+    </div>
+
+    <div class="flex justify-end mt-4">
+      <button onclick="closeReviewsModal()" class="px-4 py-2 rounded-lg border hover:bg-gray-100">Close</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- Main Application Logic -->
+  
+    <script>
+  // Initialize Lucide icons after DOM is ready
+  document.addEventListener("DOMContentLoaded", function() {
+    lucide.createIcons();
+  });
+</script>
+
+  <script src="index.js"></script>
+  <script src="clinic.js"></script>
+  <script src="review.js"></script>
+
+
+</body>
+</html>
