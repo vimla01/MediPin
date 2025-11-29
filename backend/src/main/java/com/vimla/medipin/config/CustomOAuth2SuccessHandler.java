@@ -33,23 +33,22 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         String picture = oAuth2User.getAttribute("picture");
 
         try {
-            // ✅ Save or update Google user in DB
+            
             authService.registerGoogleUser(name, email, picture);
 
-            // ✅ Fetch the user (with userId) from DB
+            
             User dbUser = authService.getUserByEmail(email);
 
-            // ✅ Store complete User object in session
+            
             HttpSession session = request.getSession(true);
             session.setAttribute("user", dbUser);
 
-            System.out.println("✅ Google login successful for: " + email);
+            System.out.println("Google login successful for: " + email);
 
-            // ✅ Redirect to frontend
             response.sendRedirect("http://localhost:5500/index.html");
 
         } catch (Exception e) {
-            System.err.println("⚠️ Google login error: " + e.getMessage());
+            System.err.println("Google login error: " + e.getMessage());
             response.sendRedirect("http://localhost:5500/login.html?error=google_login_failed");
         }
     }

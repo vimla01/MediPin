@@ -34,7 +34,7 @@ public class FacilityService {
         return facilityRepository.findById(id).orElse(null);
     }
 
-    // ✅ Get nearby facilities within 5 km, return DTOs with distance
+    // Get nearby facilities within 5 km, return DTOs with distance
     public List<FacilityDTO> getNearbyFacilities(double lat, double lng, String type) {
         double distanceMeters = 5000; // 5 km
         Point point = geometryFactory.createPoint(new Coordinate(lng, lat));
@@ -47,7 +47,7 @@ public class FacilityService {
             results = facilityRepository.findNearbyWithDistance(point, distanceMeters);
         }
 
-        // ✅ Convert query result (Object[]) → DTO
+        //  Convert query result (Object[]) → DTO
         return results.stream().map(r -> {
             return FacilityDTO.builder()
                     .facilityId(((Number) r[0]).longValue())

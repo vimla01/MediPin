@@ -11,7 +11,7 @@ public interface FacilityRepository extends JpaRepository<Facility, Long> {
 
     List<Facility> findByTypeIgnoreCase(String type);
 
-    // ✅ Nearby (any type) with distance (within given radius)
+
     @Query(value = """
         SELECT facility_id, name, type, address, contact, hours, latitude, longitude,
                ST_Distance(
@@ -28,7 +28,7 @@ public interface FacilityRepository extends JpaRepository<Facility, Long> {
         """, nativeQuery = true)
     List<Object[]> findNearbyWithDistance(@Param("point") Point point, @Param("distance") double distanceMeters);
 
-    // ✅ Nearby (by type) with distance (within given radius)
+    
     @Query(value = """
         SELECT facility_id, name, type, address, contact, hours, latitude, longitude,
                ST_Distance(

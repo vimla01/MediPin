@@ -16,5 +16,5 @@ public class FacilityDTO {
     private String hours;
     private Double latitude;
     private Double longitude;
-    private Double distanceMeters; // ✅ new
+    private Double distanceMeters; 
 }

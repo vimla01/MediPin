@@ -14,7 +14,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Long userId; // ✅ Matches your DB
+    private Long userId; 
 
     private String name;
 
@@ -31,7 +31,7 @@ public class User {
     @Column(name = "auth_provider", length = 50)
     private String authProvider;
 
-    // ✅ Compatibility for older code that used getId() / setId()
+    
     public Long getId() {
         return userId;
     }

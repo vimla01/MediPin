@@ -24,7 +24,7 @@ public class Rating {
 
     private LocalDateTime date = LocalDateTime.now();
 
-    // ✅ Show basic user info, hide sensitive data
+   
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonIgnoreProperties({
@@ -33,12 +33,12 @@ public class Rating {
     })
     private User user;
 
-    // ✅ Avoid infinite nesting
+   
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "facility_id")
     @JsonIgnoreProperties({
             "hibernateLazyInitializer", "handler",
-            "ratings"  // ⛔ prevent looping back into rating list
+            "ratings"  
     })
     private Facility facility;
 }

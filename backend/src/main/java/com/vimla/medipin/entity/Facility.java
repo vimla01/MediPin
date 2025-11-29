@@ -31,8 +31,8 @@ public class Facility {
     @Column(columnDefinition = "geometry(Point,4326)")
     private Point geom;
 
-    // ✅ One facility can have many ratings
+    
     @OneToMany(mappedBy = "facility", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties({"facility"}) // ⛔ Prevent infinite recursion
+    @JsonIgnoreProperties({"facility"}) // Prevent infinite recursion
     private List<Rating> ratings;
 }

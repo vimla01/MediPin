@@ -50,7 +50,7 @@ public class FacilityController {
         return facility != null ? toDTO(facility) : null;
     }
 
-    // ✅ Updated: Nearby hospitals/clinics within 5 km radius, includes distance
+   //nearby Facilities Endpoint
     @GetMapping("/nearby")
     public List<FacilityDTO> getNearbyFacilities(
             @RequestParam double lat,

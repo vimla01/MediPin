@@ -1,11 +1,6 @@
 package com.vimla.medipin.payload;
 
 
-
-/**
- * A simple DTO for capturing login credentials
- * from the frontend request body.
- */
 public class LoginRequest {
     private String email;
     private String password;
@@ -19,7 +14,7 @@ public class LoginRequest {
         this.password = password;
     }
 
-    // ✅ Getters and Setters
+    //Getters and Setters
     public String getEmail() {
         return email;
     }
